@@ -58,11 +58,26 @@ SELECT FirstName, LastName, Line1, City, State, ZipCode
   JOIN Addresses A ON C.CustomerID = A.CustomerID
   Where c.ShippingAddressID < c.BillingAddressID; - WRONG
 
+ -- EXERCISE 3 FROM CLASS
 SELECT *
   From Customers
 
 SELECT *
   FROM Addresses
+
+SELECT FirstName, LastName, line1 AS StreetAddress, City, State, ZipCode
+  FROM Customers C
+  JOIN Addresses A ON C.ShippingAddressID = A.AddressID;
+
+--FROM BOOK
+SELECT FirstName, LastName, Line1, City, State, ZipCode
+  FROM Customers C
+  JOIN Addresses A ON C.CustomerID = A.CustomerID 
+  AND 
+  Where c.ShippingAddressID < c.BillingAddressID;
+
+
+
 
 --EXERCISE 4 - return LastName, FirstName, OrderDate, ProductName, ItemPrice, DiscountAmount, Quantity - from Customers, orders, orderitems, product - sort Lastname, oderdate, productname 
 SELECT LastName, FirstName, OrderDate, ProductName, ItemPrice, DiscountAmount, Quantity
@@ -72,11 +87,25 @@ SELECT LastName, FirstName, OrderDate, ProductName, ItemPrice, DiscountAmount, Q
   JOIN Products P ON OI.ProductID = P.ProductID
   ORDER BY LastName, OrderDate, ProductName;
 
---EXERCISE 5 - return ProductName, ListPrice - from Products - one row for each product that has same price as another - sort by product name
-SELECT p1.ProductName, p1.ListPrice
+--EXERCISE 5 - return ProductName, ListPrice - from Products 
+-- one row for each product that has same price as another - sort by product name
+SELECT P1.ProductName, P1.ListPrice
   FROM Products P1
   JOIN Products P2 ON P1.ListPrice = P2.ListPrice
   Order BY ProductName; - WRONG
+
+--EXERCISE 5 FROM CLASS
+SELECT P1.ProductName, P1.ListPrice
+  FROM Products P1
+  JOIN Products P2 ON P1.ListPrice = P2.ListPrice
+  WHERE P1.ProductID != P2.ProductID
+  Order BY ProductName;
+
+
+
+
+
+
 
 --EXERCISE 6 - return CategoryName, ProductID - from Catagories, Products - 1 row for each category not used
 SELECT CategoryName, ProductID

@@ -101,15 +101,74 @@ SELECT P1.ProductName, P1.ListPrice
   WHERE P1.ProductID != P2.ProductID
   Order BY ProductName;
 
-
-
-
-
-
-
 --EXERCISE 6 - return CategoryName, ProductID - from Catagories, Products - 1 row for each category not used
 SELECT CategoryName, ProductID
   FROM Categories C
   LEFT JOIN Products P ON C.CategoryID = P.CategoryID
   Where ProductID IS NULL;
+
+
+--CHAPTER 5
+--EXERCISE 1 - return count of number of orders in Orders Table, Sum of TaxAmount in orders table
+SELECT COUNT(*) AS NumberOfOrders, SUM(TaxAmount) AS TotalTax
+  FROM Orders
+
+ --EXERCISE 2 -  returns one row for each category that has products
+ --CategoryName, #of products, List price of most expensive product per category - sort by #ofPROducts descending
+ SELECT CategoryName, COUNT(*) AS NumberOfProducts, MAX(ListPrice) as MostExpensive
+   FROM Categories C
+   JOIN Products P ON C.CategoryID = P.CategoryID
+   GROUP BY CategoryName
+   ORDER BY NumberOfProducts DESC;
+
+--EXERCISE 3 -  returns one row for each customer that has orders.
+--email adress, total price of order, total discount
+-- sort by price total descending
+SELECT EmailAddress, SUM(ItemPrice * Quantity) AS TotalPrice,
+       SUM(DiscountAmount * Quantity) as Discount
+  FROM Customers C
+  JOIN Orders O ON C.CustomerID = O.CustomerID
+  JOIN OrderItems OI on O.OrderID = OI.OrderID
+  GROUP BY EmailAddress
+  Order by TotalPrice DESC;
+
+--Exercise 4 -  returns one row for each customer that has orders. 
+--email address, total orders for each customer, total amount for orders for each customer
+SELECT EmailAddress, COUNT(*) AS TotalOrders,
+       SUM((ItemPrice - DiscountAmount) * Quantity) AS TotalAmount
+  FROM Customers C
+  JOIN Orders O ON C.CustomerID = O.CustomerID
+  JOIN OrderItems OI on O.OrderID = OI.OrderID
+  GROUP BY EmailAddress
+  HAVING COUNT(*) >1
+  ORDER BY TotalOrders DESC;
+
+--EXERCISE 5 -Modify the solution to exercise 4 so it only counts and totals line items that have an
+--ItemPrice value that’s greater than 400.
+SELECT EmailAddress, COUNT(*) AS TotalOrders,
+       SUM((ItemPrice - DiscountAmount) * Quantity) AS TotalAmount
+  FROM Customers C
+  JOIN Orders O ON C.CustomerID = O.CustomerID
+  JOIN OrderItems OI on O.OrderID = OI.OrderID
+  WHERE ItemPrice >400
+  GROUP BY EmailAddress
+  HAVING COUNT(*) >1 
+  ORDER BY TotalOrders DESC;
+
+--EXERCISE 6 -  What is the total amount ordered for each product?
+--return ProductName, Total Amount for each product
+SELECT ProductName, SUM((ItemPrice - DiscountAmount) * Quantity) AS TotalAmount
+  FROM Products P
+    JOIN OrderItems OI on P.ProductID = OI.ProductID
+	GROUP BY ROLLUP(ProductName);
+
+--EXERCISE 7 - Which customers have ordered more than one type of product?
+--return email address count of distict products
+SELECT EmailAddress, COUNT(DISTINCT ProductID) AS Products
+  FROM Customers C
+  JOIN Orders O ON C.CustomerID = O.CustomerID
+  JOIN OrderItems OI ON O.OrderID = OI.OrderID
+  GROUP BY EmailAddress
+  HAVING COUNT(DISTINCT ProductID)>1
+  ORDER BY EmailAddress;
 
